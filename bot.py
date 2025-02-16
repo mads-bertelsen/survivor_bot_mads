@@ -149,7 +149,7 @@ def check_emergency(me, players, monster_x, monster_y, radius=100):
     # Emergency response
     if dist_closest is not None:
         if dist_closest < radius:
-            print("Emergency, me: ", (me.x, me.y), " enemy: ", (closest_x, closest_y), "vector:",  (me.x - closest_x, me.y - closest_y))
+            #print("Emergency, me: ", (me.x, me.y), " enemy: ", (closest_x, closest_y), "vector:",  (me.x - closest_x, me.y - closest_y))
             return Vector(me.x - closest_x, me.y - closest_y)
         else:
             return None
@@ -199,10 +199,10 @@ class Hero:
         # treasure_list = None
         if treasure_list is None:
             self.movement = Vector(enemy_direction[0], enemy_direction[1])
-            print("enemy: " + direction_string, enemy_direction)
+            #print("enemy: " + direction_string, enemy_direction)
         else:
             closest = find_closest_coord_list(treasure_list, me)
-            print("towards tressure at (", closest, ") with direction", me.x - closest[0], me.y - closest[1])
+            #print("towards tressure at (", closest, ") with direction", me.x - closest[0], me.y - closest[1])
             self.movement = Vector(closest[0] - me.x, closest[1] - me.y)
 
     def run(self, t, dt, monsters, players, pickups) -> Vector | Towards | None:
@@ -218,7 +218,7 @@ class Hero:
                 return output
 
             if "volcano" in monsters.keys():
-                print("oh no, volcano!")
+                #print("oh no, volcano!")
                 monster_x_volcano, monster_y_volcano = get_all_monsters_type(monsters, given_type="volcano")
 
                 output = check_emergency(players[leader_name], players, monster_x_volcano, monster_y_volcano, radius=250)
@@ -227,7 +227,7 @@ class Hero:
 
             if t > self.next_turn:
                 self.calculate_movement(players[leader_name], pickups, monster_x, monster_y)
-                print(monsters.keys())
+                #print(monsters.keys())
                 self.next_turn += 1.3
 
             return self.movement
