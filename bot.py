@@ -62,6 +62,26 @@ def get_all_monsters(monsters):
     else:
         return np.empty((0,)), np.empty((0,))
 
+def get_all_monsters_type(monsters, given_type=None):
+    monster_x_position_arrays = []
+    monster_y_position_arrays = []
+    for monster_type, monster_info in monsters.items():
+        if given_type is not None:
+            if not given_type == monster_type:
+                continue
+
+        monster_x_position_arrays.append(monster_info.x)
+        monster_y_position_arrays.append(monster_info.y)
+
+    if len(monster_x_position_arrays) > 0:
+        monster_x_array = np.concatenate(monster_x_position_arrays)
+        monster_y_array = np.concatenate(monster_y_position_arrays)
+
+        return monster_x_array, monster_y_array
+
+    else:
+        return np.empty((0,)), np.empty((0,))
+
 
 def pick_those_in_circle(x0, y0, x_array, y_array, radius=100):
     distances = np.sqrt((x_array - x0) ** 2 + (y_array - y0) ** 2)
@@ -183,7 +203,7 @@ class Hero:
         else:
             closest = find_closest_coord_list(treasure_list, me)
             print("towards tressure at (", closest, ") with direction", me.x - closest[0], me.y - closest[1])
-            self.movement = Vector(me.x - closest[0], me.y - closest[1])
+            self.movement = Vector(closest[0] - me.x, closest[1] - me.y)
 
     def run(self, t, dt, monsters, players, pickups) -> Vector | Towards | None:
         leader_name = self.current_leader(players)
@@ -196,6 +216,14 @@ class Hero:
             output = check_emergency(players[leader_name], players, monster_x, monster_y, radius=90)
             if output is not None:
                 return output
+
+            if "volcano" in monsters.keys():
+                print("oh no, volcano!")
+                monster_x_volcano, monster_y_volcano = get_all_monsters_type(monsters, given_type="volcano")
+
+                output = check_emergency(players[leader_name], players, monster_x_volcano, monster_y_volcano, radius=500)
+                if output is not None:
+                    return output
 
             if t > self.next_turn:
                 self.calculate_movement(players[leader_name], pickups, monster_x, monster_y)
@@ -217,13 +245,13 @@ class Brain:
         hero_to_level = self.order[self.level % len(self.order)]
         self.level += 1
 
-        if self.level < 10:
+        if self.level < 40:
             return Levelup("seraphina", LevelupOptions.weapon_cooldown)
 
-        if self.level < 20:
+        if self.level < 60:
             return Levelup("seraphina", LevelupOptions.weapon_size)
 
-        if self.level < 30:
+        if self.level < 90:
             return Levelup("seraphina", LevelupOptions.weapon_longevity)
 
         wpn_cd_lvl = players[hero_to_level].levels["weapon_cooldown"]
