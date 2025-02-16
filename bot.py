@@ -221,7 +221,7 @@ class Hero:
                 print("oh no, volcano!")
                 monster_x_volcano, monster_y_volcano = get_all_monsters_type(monsters, given_type="volcano")
 
-                output = check_emergency(players[leader_name], players, monster_x_volcano, monster_y_volcano, radius=500)
+                output = check_emergency(players[leader_name], players, monster_x_volcano, monster_y_volcano, radius=250)
                 if output is not None:
                     return output
 
